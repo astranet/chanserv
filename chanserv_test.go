@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zenhotels/astranet"
+	"github.com/astranet/astranet"
 )
 
 func init() {

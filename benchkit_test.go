@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/astranet/astranet"
 	"github.com/rcrowley/go-metrics"
-	"github.com/zenhotels/astranet"
 )
 
 var chanservCli Client
