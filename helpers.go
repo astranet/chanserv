@@ -31,9 +31,11 @@ func writeFrame(wr io.Writer, frame []byte) (err error) {
 	return
 }
 
+var hashtable [1 << 16]int
+
 func writeCompressedFrame(wr io.Writer, frame []byte) (err error) {
 	comp := make([]byte, lz4.CompressBlockBound(len(frame)))
-	size, err := lz4.CompressBlock(frame, comp, 0)
+	size, err := lz4.CompressBlock(frame, comp, hashtable[:])
 	if err != nil {
 		return err
 	}
@@ -88,7 +90,7 @@ func readFrame(r io.Reader, expectCompression bool) ([]byte, error) {
 		return nil, ErrWrongUncompressedSize
 	}
 	uncompressed := make([]byte, uncompressedSize)
-	size, err := lz4.UncompressBlock(data[12:], uncompressed, 0)
+	size, err := lz4.UncompressBlock(data[12:], uncompressed)
 	if err != nil {
 		return nil, err
 	}

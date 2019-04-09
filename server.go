@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net"
 	"time"
+
+	"github.com/gofrs/uuid"
 )
 
 type server struct {
@@ -152,7 +154,8 @@ func (s server) serveMaster(masterConn net.Conn, srcFn SourceFunc) {
 }
 
 func (s server) bindChannel(out <-chan Frame) (string, error) {
-	l, err := s.mpx.Bind("", ":0") // random port
+	id := uuid.Must(uuid.NewV4()).String()
+	l, err := s.mpx.Bind("", id) // with random port
 	if err != nil {
 		err = fmt.Errorf("bindChannel mpx.Bind: %v", err)
 		s.onError(err)
@@ -167,9 +170,8 @@ func (s server) bindChannel(out <-chan Frame) (string, error) {
 
 		useCompression: s.useCompression,
 	}
-	vAddr := l.Addr().String()
 	go c.serve(s.timeouts.servingTimeout)
-	return vAddr, nil
+	return id, nil
 }
 
 type channel struct {
